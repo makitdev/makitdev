@@ -32,8 +32,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 				d.classList.add("is-loaded");
 			} else {
+				// Two frames on purpose: the first lets the browser paint the
+				// initial hidden state, the second flips to the visible state.
+				// A single rAF fires before the first paint, so the entrance
+				// transition never ran at all.
 				requestAnimationFrame(function () {
-					d.classList.add("is-loaded");
+					requestAnimationFrame(function () {
+						d.classList.add("is-loaded");
+					});
 				});
 			}
 		})();

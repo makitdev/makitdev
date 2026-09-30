@@ -36,6 +36,11 @@ if (!args.length || args[0].startsWith('-')) {
 
 const username = args[0];
 
+if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(username)) {
+  console.error(`Error: "${username}" is not a valid GitHub username.`);
+  process.exit(1);
+}
+
 function parseOption(flag, defaultValue = '') {
   const idx = args.indexOf(flag);
   if (idx !== -1 && idx + 1 < args.length) {
@@ -79,6 +84,56 @@ function fetchGitHubUser(user) {
   });
 }
 
+/**
+ * Read the contributor roster out of assets/data/contributors.js.
+ *
+ * The file is `window.MDK_CONTRIBUTORS = [ ... ];` — one JSON array literal.
+ * A non-greedy regex is NOT safe here: any string value containing the
+ * sequence `];` (e.g. a contribution like "Refactored parse() [x.js]; tests.")
+ * would truncate the match and JSON.parse would throw, which used to silently
+ * reset the roster to [] and then overwrite the file with just the new entry.
+ *
+ * So we anchor on the first `[` after the assignment and the LAST `]` in the
+ * file, and treat any failure as fatal: we never write over data we could not
+ * read.
+ */
+function readContributors(file) {
+  if (!fs.existsSync(file)) {
+    return [];
+  }
+  return extractArray(fs.readFileSync(file, 'utf8'), file);
+}
+
+/** Pull the JSON array literal out of a `window.MDK_CONTRIBUTORS = [ ... ];` file. */
+function extractArray(source, label) {
+  const assign = source.indexOf('window.MDK_CONTRIBUTORS');
+  const start = assign === -1 ? -1 : source.indexOf('[', assign);
+  const end = source.lastIndexOf(']');
+
+  if (start === -1 || end === -1 || end < start) {
+    fail(`Could not find the MDK_CONTRIBUTORS array literal in ${label}. Refusing to overwrite it.`);
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(source.slice(start, end + 1));
+  } catch (e) {
+    fail(`Could not parse the contributor array in ${label}: ${e.message}\nRefusing to overwrite it.`);
+  }
+
+  if (!Array.isArray(parsed)) {
+    fail(`The MDK_CONTRIBUTORS value in ${label} is not an array. Refusing to overwrite it.`);
+  }
+
+  return parsed;
+}
+
+/** Print a fatal error and exit without touching any file. */
+function fail(message) {
+  console.error(`Error: ${message}`);
+  process.exit(1);
+}
+
 async function main() {
   console.log(`Fetching details for GitHub user: @${username}...`);
   const gh = await fetchGitHubUser(username);
@@ -98,28 +153,21 @@ async function main() {
   };
 
   const masterFile = path.resolve(__dirname, '..', 'assets', 'data', 'contributors.js');
-  let contributors = [];
-
-  if (fs.existsSync(masterFile)) {
-    try {
-      const match = fs.readFileSync(masterFile, 'utf8').match(/window\.MDK_CONTRIBUTORS\s*=\s*(\[[\s\S]*?\]);/);
-      if (match) {
-        contributors = JSON.parse(match[1]);
-      }
-    } catch (e) {
-      contributors = [];
-    }
-  }
-
-  if (!Array.isArray(contributors)) contributors = [];
+  const contributors = readContributors(masterFile);
 
   const existingIdx = contributors.findIndex(
     (c) => c.username && c.username.toLowerCase() === username.toLowerCase()
   );
 
   if (existingIdx !== -1) {
-    contributors[existingIdx] = Object.assign({}, contributors[existingIdx], contributorObj);
-    console.log(`Updated existing contributor: @${username}`);
+    // Keep the username exactly as it was first recorded: GitHub usernames are
+    // case-insensitive, but this value is used to build the profile URL and the
+    // @handle shown on the page, so re-casing it would be a gratuitous change.
+    const existing = contributors[existingIdx];
+    contributors[existingIdx] = Object.assign({}, existing, contributorObj, {
+      username: existing.username
+    });
+    console.log(`Updated existing contributor: @${existing.username}`);
   } else {
     contributors.push(contributorObj);
     console.log(`Added new contributor: ${name} (@${username})`);
@@ -132,6 +180,14 @@ async function main() {
     { file: path.resolve(__dirname, '..', 'assets', 'data', 'contributors.js'), content: jsStr },
     { file: path.resolve(__dirname, '..', 'makitdev-theme', 'assets', 'data', 'contributors.json'), content: jsonStr }
   ];
+
+  // Round-trip both payloads through the same extractor used above, so we can
+  // never write out a file that this script would refuse to read back.
+  const fromJs = extractArray(jsStr, 'the generated assets/data/contributors.js');
+  const fromJson = JSON.parse(jsonStr);
+  if (!Array.isArray(fromJson) || fromJs.length !== fromJson.length) {
+    fail('Serialized contributor data did not round-trip cleanly. Nothing was written.');
+  }
 
   for (const item of filesToSync) {
     const dir = path.dirname(item.file);
