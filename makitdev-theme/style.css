@@ -4,7 +4,7 @@ Theme URI: https://github.com/makitdev/website
 Author: makitdev
 Author URI: https://github.com/makitdev
 Description: A minimal editorial landing-page theme for the makitdev open-source organization. Build. Share. Improve.
-Version: 1.0.0
+Version: 1.0.1
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -15,7 +15,13 @@ Tags: one-column, custom-menu, editor-style, featured-images, translation-ready,
 */
 
 /*
- * The visual styles for this theme live in assets/css/main.css,
- * enqueued from functions.php. The file below acts as the WordPress
- * theme metadata header and a home for theme-specific overrides.
+ * The visual styles for this theme live in assets/css/main.css, with
+ * assets/css/main.min.css enqueued for the front end from functions.php.
+ * The file below acts as the WordPress theme metadata header and a home for
+ * theme-specific overrides.
+ *
+ * assets/ is a copy of the repository-root assets/ directory, so the theme
+ * works standalone once installed. Keep them in sync with:
+ *
+ *     node scripts/sync-theme-assets.js
  */

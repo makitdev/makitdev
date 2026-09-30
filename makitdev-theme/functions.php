@@ -37,13 +37,18 @@ add_action( 'after_setup_theme', 'makitdev_setup' );
 
 /**
  * Enqueue styles and scripts.
+ *
+ * The theme is self-contained — once installed in wp-content/themes it cannot
+ * reach the repository root — so every asset it references must exist under
+ * makitdev-theme/assets/. Those files are copies of the canonical sources in
+ * assets/, kept in sync by `node scripts/sync-theme-assets.js`.
  */
 function makitdev_scripts() {
 	$version = wp_get_theme()->get( 'Version' );
 
 	wp_enqueue_style(
 		'makitdev-main',
-		get_template_directory_uri() . '/assets/css/main.css',
+		get_template_directory_uri() . '/assets/css/main.min.css',
 		array(),
 		$version
 	);
@@ -59,7 +64,7 @@ function makitdev_scripts() {
 	if ( is_page_template( 'page-contributors.php' ) || is_page( 'contributors' ) ) {
 		wp_enqueue_style(
 			'makitdev-contributors',
-			get_template_directory_uri() . '/assets/css/contributors.css',
+			get_template_directory_uri() . '/assets/css/contributors.min.css',
 			array( 'makitdev-main' ),
 			$version
 		);
