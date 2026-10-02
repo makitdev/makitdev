@@ -15,11 +15,13 @@ from pathlib import Path
 
 WIDTH, HEIGHT = 1200, 630
 
-BG = (10, 10, 11)        # #0a0a0b
-TEXT = (244, 244, 245)   # #f4f4f5
-MUTED = (161, 161, 170)  # #a1a1aa
-ACCENT = (59, 130, 246)  # #3b82f6
-WHITE = (255, 255, 255)
+BG = (7, 8, 7)            # #070807
+SURFACE = (17, 21, 18)    # #111512
+GRID = (13, 17, 14)       # #0d110e
+HAIRLINE = (26, 30, 27)   # #1a1e1b
+TEXT = (245, 245, 240)    # #f5f5f0
+MUTED = (154, 159, 155)   # #9a9f9b
+ACCENT = (184, 255, 101)  # #b8ff65
 
 # Tiny 5x7 font: each glyph is 7 rows of 5 chars ('1' = on, '0' = off).
 FONT = {
@@ -106,8 +108,8 @@ class Canvas:
                         if 0 <= cx < self.w and 0 <= cy < self.h:
                             self.px[cy][cx] = (*color, 255)
 
-    def text(self, s, x, y, scale, color):
-        advance = 6 * scale
+    def text(self, s, x, y, scale, color, tracking=0):
+        advance = 6 * scale + tracking
         cur = x
         for ch in s:
             glyph = FONT.get(ch, FONT[" "])
@@ -122,9 +124,40 @@ class Canvas:
             cur += advance
         return cur
 
+    def gradient(self, top, bottom):
+        for y in range(self.h):
+            t = y / max(self.h - 1, 1)
+            color = tuple(int(round(top[i] + (bottom[i] - top[i]) * t)) for i in range(3))
+            self.fill(color, 0, y, self.w, 1)
 
-def text_width(s, scale):
-    return len(s) * 6 * scale
+    def grid_lines(self, step, color):
+        for x in range(0, self.w, step):
+            self.fill(color, x, 0, 1, self.h)
+        for y in range(0, self.h, step):
+            self.fill(color, 0, y, self.w, 1)
+
+    def glow(self, cx, cy, radius, color, strength):
+        """Additive radial glow so the card matches the site's ambient light."""
+        for y in range(self.h):
+            row = self.px[y]
+            dy = y - cy
+            for x in range(self.w):
+                dx = x - cx
+                dist = (dx * dx + dy * dy) ** 0.5
+                if dist >= radius:
+                    continue
+                falloff = (1 - dist / radius) ** 2 * strength
+                r, g, b, a = row[x]
+                row[x] = (int(min(255, r + color[0] * falloff)),
+                          int(min(255, g + color[1] * falloff)),
+                          int(min(255, b + color[2] * falloff)),
+                          255)
+
+
+def text_width(s, scale, tracking=0):
+    if not s:
+        return 0
+    return len(s) * 6 * scale + (len(s) - 1) * tracking
 
 
 def write_png(path, canvas):
@@ -149,24 +182,31 @@ def write_png(path, canvas):
 def main():
     canvas = Canvas(WIDTH, HEIGHT)
 
-    # Solid background.
-    canvas.fill(BG, 0, 0, WIDTH, HEIGHT)
+    # Base wash, faint grid, and the accent glow the site uses behind the hero.
+    canvas.gradient((11, 14, 12), BG)
+    canvas.grid_lines(60, GRID)
+    canvas.glow(980, 120, 620, ACCENT, 0.16)
+    canvas.glow(120, 640, 420, (124, 255, 155), 0.05)
 
-    # Logo: accent rounded square with a white "m".
-    logo = 96
-    pad = 96
-    canvas.rounded_rect(ACCENT, pad, pad, logo, logo, 20)
-    canvas.text("m", pad + 18, pad + 6, 12, WHITE)
+    pad = 88
 
-    # Brand + tagline to the right of the logo.
-    tx = pad + logo + 40
-    ty = pad + 24
-    canvas.text("makitdev", tx, ty, 11, TEXT)
-    canvas.text("Build. Share. Improve.", tx, ty + 96, 5, MUTED)
+    # Mark: accent tile with a knocked-out "m", same as the site logo lockup.
+    tile = 84
+    canvas.rounded_rect(ACCENT, pad, 92, tile, tile, 18)
+    canvas.text("m", pad + 19, 102, 9, BG)
 
-    # Thin accent rule plus site URL along the bottom.
-    canvas.fill(ACCENT, pad, HEIGHT - pad - 8, 3 * text_width("m", 5) // 2, 8)
-    canvas.text("makitdev.wordpress.com", pad, HEIGHT - pad - 44, 3, MUTED)
+    # Editorial stack.
+    canvas.text("MAKE IT DEVELOPERS", pad, 226, 4, ACCENT, tracking=7)
+    canvas.text("makitdev", pad, 274, 14, TEXT, tracking=2)
+    canvas.fill(ACCENT, pad, 400, 104, 4)
+    canvas.text("Build. Share. Improve.", pad, 436, 5, MUTED, tracking=2)
+
+    # Footer rule plus the canonical URL.
+    canvas.fill(HAIRLINE, pad, 546, WIDTH - pad * 2, 1)
+    canvas.text("makitdev.vercel.app", pad, 566, 4, MUTED, tracking=3)
+
+    # Right-hand index mark, echoing the section numbering on the site.
+    canvas.text("01", WIDTH - pad - text_width("01", 5, tracking=2), 92, 5, ACCENT, tracking=2)
 
     out = Path(__file__).resolve().parent.parent / "assets" / "images" / "og-1200x630.png"
     write_png(out, canvas)

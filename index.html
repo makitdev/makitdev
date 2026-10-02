@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>makitdev — Open Source Software</title>
-  <meta name="description" content="makitdev is an open-source organization building useful software, developer tools, security utilities, applications, and experiments.">
+  <title>makitdev — Build. Share. Improve.</title>
+  <meta name="description" content="makitdev is an open-source organization focused on building practical software and sharing it openly — developer tools, security utilities, applications and experiments.">
   <meta name="author" content="makitdev">
-  <meta name="theme-color" content="#0a0a0b">
-  <link rel="canonical" href="https://makitdev.wordpress.com/">
+  <meta name="theme-color" content="#070807">
+  <link rel="canonical" href="https://makitdev.vercel.app/">
 
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://makitdev.wordpress.com/">
+  <meta property="og:url" content="https://makitdev.vercel.app/">
   <meta property="og:title" content="makitdev — Build. Share. Improve.">
-  <meta property="og:description" content="makitdev is an open-source organization building useful software, developer tools, security utilities, applications, and experiments.">
+  <meta property="og:description" content="makitdev is an open-source organization focused on building practical software and sharing it openly — developer tools, security utilities, applications and experiments.">
   <meta property="og:site_name" content="makitdev">
-  <meta property="og:image" content="https://makitdev.wordpress.com/assets/images/og-1200x630.png">
+  <meta property="og:image" content="https://makitdev.vercel.app/assets/images/og-1200x630.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="makitdev — Build. Share. Improve.">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="makitdev — Build. Share. Improve.">
-  <meta name="twitter:description" content="makitdev is an open-source organization building useful software, developer tools, security utilities, applications, and experiments.">
-  <meta name="twitter:image" content="https://makitdev.wordpress.com/assets/images/og-1200x630.png">
+  <meta name="twitter:description" content="makitdev is an open-source organization focused on building practical software and sharing it openly — developer tools, security utilities, applications and experiments.">
+  <meta name="twitter:image" content="https://makitdev.vercel.app/assets/images/og-1200x630.png">
 
   <script type="application/ld+json">
   {
@@ -30,27 +30,31 @@
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://makitdev.wordpress.com/#organization",
+        "@id": "https://makitdev.vercel.app/#organization",
         "name": "makitdev",
-        "url": "https://makitdev.wordpress.com/",
+        "alternateName": "make it developers",
+        "url": "https://makitdev.vercel.app/",
         "sameAs": ["https://github.com/makitdev"],
-        "logo": "https://makitdev.wordpress.com/assets/images/favicon.svg",
-        "description": "makitdev is an open-source organization building useful software, developer tools, security utilities, applications, and experiments."
+        "logo": "https://makitdev.vercel.app/assets/images/favicon.svg",
+        "slogan": "Build. Share. Improve.",
+        "description": "makitdev is an open-source organization focused on building practical software and sharing it openly."
       },
       {
         "@type": "WebSite",
-        "@id": "https://makitdev.wordpress.com/#website",
-        "url": "https://makitdev.wordpress.com/",
+        "@id": "https://makitdev.vercel.app/#website",
+        "url": "https://makitdev.vercel.app/",
         "name": "makitdev",
-        "description": "makitdev is an open-source organization building useful software, developer tools, security utilities, applications, and experiments.",
-        "publisher": { "@id": "https://makitdev.wordpress.com/#organization" }
+        "description": "makitdev is an open-source organization focused on building practical software and sharing it openly.",
+        "publisher": { "@id": "https://makitdev.vercel.app/#organization" }
       }
     ]
   }
   </script>
 
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="preload" href="assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/images/hero-bg.png" as="image" media="(min-width: 721px)" fetchpriority="high">
   <link rel="stylesheet" href="assets/css/main.min.css">
 
   <script>
@@ -77,145 +81,376 @@
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
-    <div class="container nav-inner">
-      <a class="brand" href="#main">makitdev</a>
+    <div class="nav">
+      <a class="brand" href="#home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>makitdev</span>
+      </a>
       <nav aria-label="Primary">
         <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
           <li><a href="#about">About</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#principles">Principles</a></li>
           <li><a href="contributors.html">Contributors</a></li>
-          <li><a class="nav-gh" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">GitHub <span class="arrow" aria-hidden="true">↗</span></a></li>
         </ul>
       </nav>
+      <a class="nav-gh" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">GitHub <span class="arrow" aria-hidden="true">↗</span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer">
+        <span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        Menu
+      </button>
     </div>
   </header>
 
+  <div class="nav-scrim" hidden></div>
+  <div class="nav-drawer" id="nav-drawer" hidden>
+    <nav aria-label="Mobile">
+      <ul class="nav-drawer-list">
+        <li><a href="#home" style="--drawer-delay:80ms"><span>Home</span><span class="nav-drawer-index">01</span></a></li>
+        <li><a href="#about" style="--drawer-delay:130ms"><span>About</span><span class="nav-drawer-index">02</span></a></li>
+        <li><a href="#projects" style="--drawer-delay:180ms"><span>Projects</span><span class="nav-drawer-index">03</span></a></li>
+        <li><a href="#principles" style="--drawer-delay:230ms"><span>Principles</span><span class="nav-drawer-index">04</span></a></li>
+        <li><a href="contributors.html" style="--drawer-delay:280ms"><span>Contributors</span><span class="nav-drawer-index">05</span></a></li>
+      </ul>
+      <a class="btn btn--ghost nav-drawer-gh" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">GitHub <span class="arrow" aria-hidden="true">↗</span></a>
+    </nav>
+  </div>
+
   <main id="main">
 
-    <!-- Hero -->
-    <section class="hero">
+    <!-- ============================ Hero ============================ -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+
+      <div class="hero-media" aria-hidden="true">
+        <picture>
+          <source media="(max-width: 720px)" srcset="assets/images/hero-bg-mobile.png">
+          <img class="hero-img" src="assets/images/hero-bg.png" alt="" width="1920" height="1200" fetchpriority="high" decoding="async">
+        </picture>
+        <canvas class="hero-canvas"></canvas>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="hero-vignette" aria-hidden="true"></div>
+
       <div class="container">
         <div class="hero-inner">
-          <p class="label" data-hero>Open Source Software</p>
-          <h1>
-            <span class="line" data-hero style="--hero-delay: 80ms">Build.</span>
-            <span class="line" data-hero style="--hero-delay: 170ms">Share.</span>
-            <span class="line" data-hero style="--hero-delay: 260ms">Improve.</span>
+
+          <p class="hero-badge" data-hero style="--hero-delay:60ms">
+            <span class="hero-badge-dot" aria-hidden="true"></span>
+            Open Source · Built in the open
+          </p>
+
+          <h1 id="hero-title">
+            <span class="hero-line"><span style="--line-delay:140ms">Build.</span></span>
+            <span class="hero-line"><span style="--line-delay:230ms">Share.</span></span>
+            <span class="hero-line"><span style="--line-delay:320ms">Improve<em>.</em></span></span>
           </h1>
-          <p data-hero style="--hero-delay: 380ms">makitdev is an open-source organization building useful software, tools, and experiments for the community.</p>
-          <a class="tlink hero-cta" data-hero style="--hero-delay: 500ms" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
-            Explore GitHub <i class="arrow" aria-hidden="true">↗</i>
+
+          <p class="hero-copy" data-hero style="--hero-delay:520ms">
+            Practical open-source software for developers, security researchers,
+            and curious builders.
+          </p>
+
+          <div class="hero-actions" data-hero style="--hero-delay:620ms">
+            <a class="btn" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
+              Explore GitHub <span class="arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="btn btn--ghost" href="#about">
+              Discover makitdev <span class="arrow" aria-hidden="true">↓</span>
+            </a>
+          </div>
+
+          <p class="hero-float" data-hero style="--hero-delay:760ms">
+            Built by developers, for developers
+          </p>
+
+        </div>
+      </div>
+
+      <ul class="hero-metrics" aria-label="What makitdev is">
+        <li>
+          <span class="metric-label">Open Source</span>
+          <span class="metric-value">MIT License</span>
+        </li>
+        <li>
+          <span class="metric-label">Developer Tools</span>
+          <span class="metric-value">Security</span>
+        </li>
+        <li>
+          <span class="metric-label">Web</span>
+          <span class="metric-value">Experiments</span>
+        </li>
+        <li>
+          <span class="metric-label">Community</span>
+          <span class="metric-value">Contributions</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- =========================== 01 About =========================== -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container about-grid">
+        <p class="label about-label reveal">01 / About</p>
+        <div class="about-body">
+          <h2 class="section-title reveal" id="about-title" style="--reveal-delay:80ms">What is makitdev?</h2>
+          <p class="lede reveal" style="--reveal-delay:150ms">
+            makitdev is an open-source organization focused on building practical
+            software and sharing it openly.
+          </p>
+          <p class="lede reveal" style="--reveal-delay:220ms">
+            We experiment with ideas, build useful tools, and release software that
+            others can inspect, use, modify, and improve.
+          </p>
+          <div class="about-note reveal" style="--reveal-delay:300ms">
+            <span class="about-note-mark" aria-hidden="true">“</span>
+            <p>
+              make it developers — small tools that solve a real problem, released
+              under an open-source license, maintained in public.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== 02 What we build ====================== -->
+    <section class="section" id="builds" aria-labelledby="builds-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="label reveal">02 / What We Build</p>
+          <h2 class="section-title reveal" id="builds-title" style="--reveal-delay:80ms">Software for curious minds.</h2>
+        </div>
+
+        <ul class="build-grid">
+          <li class="card reveal" tabindex="0" data-glow>
+            <span class="card-art card-art--tools" aria-hidden="true"></span>
+            <div class="card-top">
+              <span class="card-num">01</span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
+            <div class="card-body">
+              <h3>Developer Tools</h3>
+              <p>CLI tools, libraries, APIs and utilities.</p>
+            </div>
+          </li>
+          <li class="card reveal" tabindex="0" data-glow style="--reveal-delay:80ms">
+            <span class="card-art card-art--security" aria-hidden="true"></span>
+            <div class="card-top">
+              <span class="card-num">02</span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
+            <div class="card-body">
+              <h3>Security</h3>
+              <p>Security tools, analysis utilities and defensive software.</p>
+            </div>
+          </li>
+          <li class="card reveal" tabindex="0" data-glow style="--reveal-delay:160ms">
+            <span class="card-art card-art--apps" aria-hidden="true"></span>
+            <div class="card-top">
+              <span class="card-num">03</span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
+            <div class="card-body">
+              <h3>Applications</h3>
+              <p>Useful software built around real-world problems.</p>
+            </div>
+          </li>
+          <li class="card reveal" tabindex="0" data-glow style="--reveal-delay:240ms">
+            <span class="card-art card-art--lab" aria-hidden="true"></span>
+            <div class="card-top">
+              <span class="card-num">04</span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
+            <div class="card-body">
+              <h3>Experiments</h3>
+              <p>Prototypes, research and technical experiments.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================= 03 Principles ========================= -->
+    <section class="section" id="principles" aria-labelledby="principles-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="label reveal">03 / Principles</p>
+          <h2 class="section-title reveal" id="principles-title" style="--reveal-delay:80ms">How we build.</h2>
+        </div>
+
+        <div class="manifesto">
+          <article class="manifesto-item reveal">
+            <p class="manifesto-num">01</p>
+            <h3 class="manifesto-word">Build</h3>
+            <p class="manifesto-copy">Create software that solves real problems.</p>
+          </article>
+          <article class="manifesto-item reveal" style="--reveal-delay:90ms">
+            <p class="manifesto-num">02</p>
+            <h3 class="manifesto-word">Share</h3>
+            <p class="manifesto-copy">Keep useful software open and accessible.</p>
+          </article>
+          <article class="manifesto-item reveal" style="--reveal-delay:180ms">
+            <p class="manifesto-num">03</p>
+            <h3 class="manifesto-word">Improve</h3>
+            <p class="manifesto-copy">Learn from others and make things better together.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 04 Built in the open ===================== -->
+    <section class="section" id="open" aria-labelledby="open-title">
+      <div class="container center">
+        <p class="label label--bare reveal" style="justify-content:center">04 / Built In The Open</p>
+        <h2 class="section-title reveal" id="open-title" style="--reveal-delay:80ms">Open by default.</h2>
+        <p class="statement-copy reveal" style="--reveal-delay:150ms">
+          Development happens in public. Source code, documentation, issues,
+          discussions, and contributions are part of the process.
+        </p>
+
+        <ol class="flow" data-flow aria-label="How work moves through makitdev">
+          <span class="flow-rail" aria-hidden="true"><span class="flow-progress"></span></span>
+          <li class="flow-step">
+            <span class="flow-node" aria-hidden="true"></span>
+            <p class="flow-word">Idea</p>
+            <p class="flow-note">A problem worth solving.</p>
+          </li>
+          <li class="flow-step">
+            <span class="flow-node" aria-hidden="true"></span>
+            <p class="flow-word">Build</p>
+            <p class="flow-note">Small, readable, tested.</p>
+          </li>
+          <li class="flow-step">
+            <span class="flow-node" aria-hidden="true"></span>
+            <p class="flow-word">Open</p>
+            <p class="flow-note">Public source and issues.</p>
+          </li>
+          <li class="flow-step">
+            <span class="flow-node" aria-hidden="true"></span>
+            <p class="flow-word">Share</p>
+            <p class="flow-note">Documented and released.</p>
+          </li>
+          <li class="flow-step">
+            <span class="flow-node" aria-hidden="true"></span>
+            <p class="flow-word">Improve</p>
+            <p class="flow-note">Feedback becomes patches.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========================= 05 Projects ========================= -->
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="label reveal">05 / Projects</p>
+          <h2 class="section-title reveal" id="projects-title" style="--reveal-delay:80ms">Small software. Useful ideas.</h2>
+          <p class="lede reveal" style="--reveal-delay:150ms">
+            makitdev releases small tools and components across a few areas. The
+            repositories below are read live from the organization on GitHub.
+          </p>
+        </div>
+
+        <div class="eco">
+          <ul class="eco-cats reveal">
+            <li class="eco-cat"><span class="eco-cat-num">01</span> Developer Tools<span class="eco-cat-mark" aria-hidden="true"></span></li>
+            <li class="eco-cat"><span class="eco-cat-num">02</span> Security<span class="eco-cat-mark" aria-hidden="true"></span></li>
+            <li class="eco-cat"><span class="eco-cat-num">03</span> Applications<span class="eco-cat-mark" aria-hidden="true"></span></li>
+            <li class="eco-cat"><span class="eco-cat-num">04</span> Web Infrastructure<span class="eco-cat-mark" aria-hidden="true"></span></li>
+            <li class="eco-cat"><span class="eco-cat-num">05</span> Experiments<span class="eco-cat-mark" aria-hidden="true"></span></li>
+          </ul>
+
+          <div class="eco-repos reveal" style="--reveal-delay:120ms">
+            <ul class="repos" id="repos" aria-label="Repositories">
+              <li class="people-skeleton" aria-hidden="true" style="grid-column:1/-1"><span></span><span></span><span></span></li>
+            </ul>
+            <p class="repo-note" id="repo-note"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== 06 Join the build ====================== -->
+    <section class="section" id="join" aria-labelledby="join-title">
+      <div class="container center">
+        <p class="label label--bare reveal" style="justify-content:center">06 / Join The Build</p>
+        <h2 class="section-title reveal" id="join-title" style="--reveal-delay:80ms">Build with us.</h2>
+        <p class="statement-copy reveal" style="--reveal-delay:150ms">
+          Explore the source. Follow the work. Share an idea. Report a problem.
+          Contribute.
+        </p>
+
+        <ul class="actions reveal" style="--reveal-delay:220ms">
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">⭐</span>
+            <p class="action-label">Star a project</p>
+            <a class="action-link tlink" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">Open the org <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">🐛</span>
+            <p class="action-label">Report a bug</p>
+            <a class="action-link tlink" href="https://github.com/makitdev/makitdev/issues" target="_blank" rel="noopener noreferrer">Open an issue <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">💡</span>
+            <p class="action-label">Suggest an improvement</p>
+            <a class="action-link tlink" href="https://github.com/makitdev/makitdev/discussions" target="_blank" rel="noopener noreferrer">Start a discussion <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">📝</span>
+            <p class="action-label">Improve documentation</p>
+            <a class="action-link tlink" href="https://github.com/makitdev/makitdev/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Read CONTRIBUTING.md <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">🧪</span>
+            <p class="action-label">Add tests</p>
+            <a class="action-link tlink" href="https://github.com/makitdev/makitdev/pulls" target="_blank" rel="noopener noreferrer">Open a pull request <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">🔧</span>
+            <p class="action-label">Fix an issue</p>
+            <a class="action-link tlink" href="https://github.com/makitdev/makitdev/issues" target="_blank" rel="noopener noreferrer">Pick something up <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+          <li class="action">
+            <span class="action-icon" aria-hidden="true">🤝</span>
+            <p class="action-label">Submit a pull request</p>
+            <a class="action-link tlink" href="https://github.com/makitdev/makitdev/pulls" target="_blank" rel="noopener noreferrer">Open a pull request <span class="arrow" aria-hidden="true">↗</span></a>
+          </li>
+        </ul>
+
+        <div class="cta-actions reveal" style="--reveal-delay:280ms">
+          <a class="btn" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
+            Explore makitdev on GitHub <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="btn btn--ghost" href="contributors.html">
+            View Contributors <span class="arrow" aria-hidden="true">↗</span>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- Introduction -->
-    <section class="section" id="about" aria-labelledby="about-title">
-      <div class="container about-grid">
-        <p class="label reveal">01 / About</p>
-        <div class="section-copy reveal" style="--reveal-delay: 90ms">
-          <h2 class="section-title" id="about-title">What is makitdev?</h2>
-          <p>makitdev is an open-source organization focused on building practical software and sharing it openly.</p>
-          <p>We experiment with ideas, build useful tools, and release software that others can inspect, use, modify, and improve.</p>
+    <!-- ======================= 07 Contributors ======================= -->
+    <section class="section section--tight" id="contributors" aria-labelledby="contributors-title">
+      <div class="container people">
+        <div>
+          <p class="label reveal">07 / Contributors</p>
+          <h2 class="section-title reveal" id="contributors-title" style="--reveal-delay:80ms">Built in public.</h2>
+          <p class="statement-copy reveal" style="--reveal-delay:150ms">
+            Avatars and commit counts load live from GitHub, so this roster only
+            ever shows real accounts and real contributions.
+          </p>
+          <div class="people-meta reveal" style="--reveal-delay:220ms">
+            <p class="people-count" id="people-count">&nbsp;</p>
+            <a class="tlink" href="contributors.html">Become a contributor <span class="arrow" aria-hidden="true">↗</span></a>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Principles -->
-    <section class="section section--tight" id="principles" aria-labelledby="principles-heading">
-      <div class="container">
-        <div class="section-head reveal">
-          <h2 class="label" id="principles-heading">02 / Principles</h2>
+        <div>
+          <ul class="people-avatars reveal" id="people-avatars" aria-label="Contributors">
+            <li class="people-skeleton" aria-hidden="true"><span></span></li>
+            <li class="people-skeleton" aria-hidden="true"><span></span></li>
+            <li class="people-skeleton" aria-hidden="true"><span></span></li>
+          </ul>
         </div>
-        <div class="principles">
-          <article class="principle reveal">
-            <p class="principle-num">01</p>
-            <h3>Build</h3>
-            <p>Create software that solves real problems.</p>
-          </article>
-          <article class="principle reveal">
-            <p class="principle-num">02</p>
-            <h3>Share</h3>
-            <p>Keep useful software open and accessible.</p>
-          </article>
-          <article class="principle reveal">
-            <p class="principle-num">03</p>
-            <h3>Improve</h3>
-            <p>Learn from others and make things better together.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- What We Build -->
-    <section class="section" id="builds" aria-labelledby="builds-title">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="label">03 / What We Build</p>
-          <h2 class="section-title" id="builds-title">Software for curious minds.</h2>
-        </div>
-        <ul class="wwb-grid">
-          <li class="cat" tabindex="0">
-            <div class="cat-top">
-              <h3>Developer Tools</h3>
-              <span class="arrow" aria-hidden="true">→</span>
-            </div>
-            <p class="cat-desc">CLI tools, libraries, APIs and utilities.</p>
-          </li>
-          <li class="cat" tabindex="0">
-            <div class="cat-top">
-              <h3>Security</h3>
-              <span class="arrow" aria-hidden="true">→</span>
-            </div>
-            <p class="cat-desc">Security tools, analysis utilities and defensive software.</p>
-          </li>
-          <li class="cat" tabindex="0">
-            <div class="cat-top">
-              <h3>Applications</h3>
-              <span class="arrow" aria-hidden="true">→</span>
-            </div>
-            <p class="cat-desc">Useful software built around real-world problems.</p>
-          </li>
-          <li class="cat" tabindex="0">
-            <div class="cat-top">
-              <h3>Experiments</h3>
-              <span class="arrow" aria-hidden="true">→</span>
-            </div>
-            <p class="cat-desc">Prototypes, research and technical experiments.</p>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Open Source -->
-    <section class="section" id="open" aria-labelledby="open-title">
-      <div class="container center">
-        <p class="label reveal">04 / Built In The Open</p>
-        <h2 class="section-title reveal" id="open-title" style="--reveal-delay: 90ms">Open by default.</h2>
-        <p class="statement-copy reveal" style="--reveal-delay: 160ms">Development happens in public. Source code, documentation, issues, discussions, and contributions are part of the process.</p>
-        <ol class="flow" aria-label="Workflow">
-          <li class="flow-step reveal">Idea</li>
-          <li class="flow-arrow reveal" style="--reveal-delay: 60ms" aria-hidden="true">↓</li>
-          <li class="flow-step reveal">Build</li>
-          <li class="flow-arrow reveal" style="--reveal-delay: 60ms" aria-hidden="true">↓</li>
-          <li class="flow-step reveal">Open</li>
-          <li class="flow-arrow reveal" style="--reveal-delay: 60ms" aria-hidden="true">↓</li>
-          <li class="flow-step reveal">Share</li>
-          <li class="flow-arrow reveal" style="--reveal-delay: 60ms" aria-hidden="true">↓</li>
-          <li class="flow-step reveal">Improve</li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="section section--tight" id="join" aria-labelledby="join-title">
-      <div class="container center">
-        <p class="label reveal">05 / Join The Build</p>
-        <h2 class="section-title reveal" id="join-title" style="--reveal-delay: 90ms">Build with us.</h2>
-        <p class="statement-copy reveal" style="--reveal-delay: 160ms">Explore the source. Follow the work. Share an idea. Report a problem. Contribute.</p>
-        <a class="cta-link reveal" style="--reveal-delay: 240ms" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
-          Explore makitdev on GitHub <i class="arrow" aria-hidden="true">↗</i>
-        </a>
       </div>
     </section>
 
@@ -225,19 +460,27 @@
     <div class="container">
       <div class="footer-top">
         <div>
-          <p class="footer-brand">makitdev</p>
+          <p class="footer-word">makitdev</p>
           <p class="footer-tagline">Build. Share. Improve.</p>
         </div>
-        <a href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
-          GitHub <span class="arrow" aria-hidden="true">↗</span>
-        </a>
+        <ul class="footer-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#principles">Principles</a></li>
+          <li><a href="contributors.html">Contributors</a></li>
+          <li><a href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">GitHub <span class="arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
       </div>
       <div class="footer-bottom">
         <p>© 2026 makitdev · Open-source software.</p>
+        <p>Built by developers, for developers.</p>
       </div>
     </div>
   </footer>
 
+  <script src="assets/data/contributors.js" defer></script>
+  <script src="assets/js/github.js" defer></script>
+  <script src="assets/js/community.js" defer></script>
   <script src="assets/js/main.js" defer></script>
 </body>
 </html>
