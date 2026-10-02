@@ -4,9 +4,11 @@
  *
  * Contributors page template.
  *
- * Renders the contributor cards from assets/data/contributors.json, the
- * same data file the static contributors.html page uses. Keep the copy
- * and data in sync between the two versions.
+ * Mirrors the repository's contributors.html. The roster is rendered on the
+ * server from assets/data/contributors.json — the same data the static page
+ * uses through assets/data/contributors.js — and is then reconciled with live
+ * GitHub contribution counts by assets/js/contributors.js, so the list still
+ * works with JavaScript disabled.
  *
  * @package makitdev
  */
@@ -15,19 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$contributors_file = get_template_directory() . '/assets/data/contributors.json';
-$contributors      = array();
-
-if ( file_exists( $contributors_file ) ) {
-	$data = json_decode( (string) file_get_contents( $contributors_file ), true );
-	if ( is_array( $data ) ) {
-		$contributors = $data;
-	}
-}
-
 if ( ! function_exists( 'makitdev_contributor_avatar' ) ) {
+	/**
+	 * Avatar URL for a roster entry, falling back to the GitHub-generated one.
+	 *
+	 * @param array $contributor Roster entry.
+	 * @return string
+	 */
 	function makitdev_contributor_avatar( array $contributor ) {
-		$base = isset( $contributor['avatar'] ) && '' !== $contributor['avatar']
+		$base = ! empty( $contributor['avatar'] )
 			? $contributor['avatar']
 			: 'https://github.com/' . rawurlencode( $contributor['username'] ) . '.png';
 		$base = ( false === strpos( $base, '?' ) ) ? $base . '?s=144' : $base . '&s=144';
@@ -36,13 +34,21 @@ if ( ! function_exists( 'makitdev_contributor_avatar' ) ) {
 }
 
 if ( ! function_exists( 'makitdev_contributor_link' ) ) {
+	/**
+	 * Profile URL for a roster entry.
+	 *
+	 * @param array $contributor Roster entry.
+	 * @return string
+	 */
 	function makitdev_contributor_link( array $contributor ) {
-		if ( isset( $contributor['github'] ) && '' !== $contributor['github'] ) {
+		if ( ! empty( $contributor['github'] ) ) {
 			return $contributor['github'];
 		}
 		return 'https://github.com/' . rawurlencode( $contributor['username'] );
 	}
 }
+
+$makitdev_contributors = makitdev_read_roster();
 
 get_header();
 ?>
@@ -50,11 +56,16 @@ get_header();
 <main id="main">
 
 	<!-- Intro -->
-	<section class="section" id="contributors" aria-labelledby="contributors-title">
+	<section class="page-hero" id="contributors" aria-labelledby="contributors-title">
+		<div class="page-hero-media" aria-hidden="true">
+			<div class="grain"></div>
+		</div>
 		<div class="container">
-			<p class="label"><?php esc_html_e( 'Contributors', 'makitdev' ); ?></p>
-			<h1 class="section-title" id="contributors-title"><?php esc_html_e( 'People building makitdev in the open.', 'makitdev' ); ?></h1>
-			<p class="statement-copy"><?php esc_html_e( 'The list below comes from the repository\'s contributor data and always reflects the people who have helped build makitdev, whatever the size of the contribution.', 'makitdev' ); ?></p>
+			<p class="label reveal"><?php esc_html_e( 'Contributors', 'makitdev' ); ?></p>
+			<h1 class="section-title" id="contributors-title"><?php esc_html_e( 'Built in public.', 'makitdev' ); ?></h1>
+			<p class="statement-copy">
+				<?php esc_html_e( 'Every account here is real — nobody is invented for the sake of a screenshot. Commit counts are read live from GitHub for everyone who has pushed to a makitdev repository, and community members are credited by name.', 'makitdev' ); ?>
+			</p>
 		</div>
 	</section>
 
@@ -62,60 +73,55 @@ get_header();
 	<section class="section section--tight" id="roster" aria-labelledby="roster-heading">
 		<div class="container">
 			<h2 class="sr-only" id="roster-heading"><?php esc_html_e( 'Contributor list', 'makitdev' ); ?></h2>
-			<?php if ( ! empty( $contributors ) ) : ?>
-				<ul class="contributors-grid" aria-label="<?php esc_attr_e( 'Contributors', 'makitdev' ); ?>">
-					<?php foreach ( $contributors as $person ) :
-						if ( ! is_array( $person ) || empty( $person['username'] ) ) {
-							continue;
-						}
-						?>
-						<li class="contributor reveal">
-							<img
-								class="contributor-avatar"
-								src="<?php echo esc_url( makitdev_contributor_avatar( $person ) ); ?>"
-								alt="<?php echo esc_attr( isset( $person['name'] ) ? $person['name'] : $person['username'] ); ?>"
-								width="144"
-								height="144"
-								loading="lazy"
-							>
-							<div class="contributor-body">
-								<div class="contributor-head">
-									<div>
-										<h3 class="contributor-name"><?php echo esc_html( isset( $person['name'] ) ? $person['name'] : '@' . $person['username'] ); ?></h3>
-										<p class="contributor-handle">@<?php echo esc_html( $person['username'] ); ?></p>
-									</div>
-									<a class="contributor-link tlink" href="<?php echo esc_url( makitdev_contributor_link( $person ) ); ?>" target="_blank" rel="noopener noreferrer">
-										<?php esc_html_e( 'GitHub', 'makitdev' ); ?> <span class="arrow" aria-hidden="true">↗</span>
-									</a>
+			<ul class="contributors-grid" id="contributors-grid" aria-label="<?php esc_attr_e( 'Contributors', 'makitdev' ); ?>">
+				<?php foreach ( $makitdev_contributors as $makitdev_person ) : ?>
+					<li class="contributor reveal">
+						<img
+							class="contributor-avatar"
+							src="<?php echo esc_url( makitdev_contributor_avatar( $makitdev_person ) ); ?>"
+							alt="<?php echo esc_attr( ! empty( $makitdev_person['name'] ) ? $makitdev_person['name'] : $makitdev_person['username'] ); ?>"
+							width="144"
+							height="144"
+							loading="lazy"
+						>
+						<div class="contributor-body">
+							<div class="contributor-head">
+								<div>
+									<h3 class="contributor-name"><?php echo esc_html( ! empty( $makitdev_person['name'] ) ? $makitdev_person['name'] : '@' . $makitdev_person['username'] ); ?></h3>
+									<p class="contributor-handle">@<?php echo esc_html( $makitdev_person['username'] ); ?></p>
 								</div>
-								<?php if ( ! empty( $person['role'] ) ) : ?>
-									<p class="contributor-role"><?php echo esc_html( $person['role'] ); ?></p>
-								<?php endif; ?>
-								<?php if ( ! empty( $person['contribution'] ) ) : ?>
-									<p class="contributor-desc"><?php echo esc_html( $person['contribution'] ); ?></p>
-								<?php endif; ?>
+								<a class="contributor-link" href="<?php echo esc_url( makitdev_contributor_link( $makitdev_person ) ); ?>" target="_blank" rel="noopener noreferrer">
+									<?php esc_html_e( 'GitHub', 'makitdev' ); ?> <span class="arrow" aria-hidden="true">&#8599;</span>
+								</a>
 							</div>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			<?php else : ?>
-				<p class="statement-copy"><?php esc_html_e( 'No contributors listed yet.', 'makitdev' ); ?></p>
-			<?php endif; ?>
+							<?php if ( ! empty( $makitdev_person['role'] ) ) : ?>
+								<p class="contributor-role"><?php echo esc_html( $makitdev_person['role'] ); ?></p>
+							<?php endif; ?>
+							<?php if ( ! empty( $makitdev_person['contribution'] ) ) : ?>
+								<p class="contributor-desc"><?php echo esc_html( $makitdev_person['contribution'] ); ?></p>
+							<?php endif; ?>
+						</div>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+			<p class="repo-note" id="roster-note"></p>
 		</div>
 	</section>
 
 	<!-- Contribute -->
-	<section class="section section--tight" id="contribute" aria-labelledby="contribute-title">
+	<section class="section" id="contribute" aria-labelledby="contribute-title">
 		<div class="container center">
-			<p class="label reveal"><?php esc_html_e( 'Want to contribute?', 'makitdev' ); ?></p>
-			<h2 class="section-title reveal" id="contribute-title" style="--reveal-delay: 90ms"><?php esc_html_e( 'Build. Share. Improve.', 'makitdev' ); ?></h2>
-			<p class="statement-copy reveal" style="--reveal-delay: 160ms"><?php esc_html_e( 'Explore the source, open an issue, or send a pull request. Every contribution counts.', 'makitdev' ); ?></p>
-			<div class="cta-actions reveal" style="--reveal-delay: 240ms">
-				<a class="tlink" href="https://github.com/makitdev/makitdev/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">
-					<?php esc_html_e( 'View CONTRIBUTING.md', 'makitdev' ); ?> <span class="arrow" aria-hidden="true">↗</span>
+			<p class="label label--bare reveal" style="justify-content:center"><?php esc_html_e( 'Join The Build', 'makitdev' ); ?></p>
+			<h2 class="section-title reveal" id="contribute-title" style="--reveal-delay:90ms"><?php esc_html_e( 'Build. Share. Improve.', 'makitdev' ); ?></h2>
+			<p class="statement-copy reveal" style="--reveal-delay:160ms">
+				<?php esc_html_e( 'Explore the source, open an issue, or send a pull request. Every contribution counts — documentation and tests included.', 'makitdev' ); ?>
+			</p>
+			<div class="cta-actions reveal" style="--reveal-delay:240ms">
+				<a class="btn" href="https://github.com/makitdev/makitdev/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'View CONTRIBUTING.md', 'makitdev' ); ?> <span class="arrow" aria-hidden="true">&#8599;</span>
 				</a>
-				<a class="tlink" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
-					<?php esc_html_e( 'GitHub Organization', 'makitdev' ); ?> <span class="arrow" aria-hidden="true">↗</span>
+				<a class="btn btn--ghost" href="https://github.com/makitdev" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'GitHub Organization', 'makitdev' ); ?> <span class="arrow" aria-hidden="true">&#8599;</span>
 				</a>
 			</div>
 		</div>

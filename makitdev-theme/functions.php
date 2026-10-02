@@ -42,41 +42,149 @@ add_action( 'after_setup_theme', 'makitdev_setup' );
  * reach the repository root — so every asset it references must exist under
  * makitdev-theme/assets/. Those files are copies of the canonical sources in
  * assets/, kept in sync by `node scripts/sync-theme-assets.js`.
+ *
+ * Load order matches the static pages: data, GitHub API helper, renderers,
+ * interactions, then the page-specific script.
  */
 function makitdev_scripts() {
 	$version = wp_get_theme()->get( 'Version' );
+	$base    = get_template_directory_uri() . '/assets';
 
 	wp_enqueue_style(
 		'makitdev-main',
-		get_template_directory_uri() . '/assets/css/main.min.css',
+		$base . '/css/main.min.css',
 		array(),
 		$version
 	);
 
 	wp_enqueue_script(
-		'makitdev-main',
-		get_template_directory_uri() . '/assets/js/main.js',
+		'makitdev-github',
+		$base . '/js/github.js',
 		array(),
 		$version,
 		true
 	);
 
-	if ( is_page_template( 'page-contributors.php' ) || is_page( 'contributors' ) ) {
+	wp_enqueue_script(
+		'makitdev-community',
+		$base . '/js/community.js',
+		array( 'makitdev-github' ),
+		$version,
+		true
+	);
+
+	wp_enqueue_script(
+		'makitdev-main',
+		$base . '/js/main.js',
+		array( 'makitdev-community' ),
+		$version,
+		true
+	);
+
+	if ( makitdev_is_contributors_page() ) {
 		wp_enqueue_style(
 			'makitdev-contributors',
-			get_template_directory_uri() . '/assets/css/contributors.min.css',
+			$base . '/css/contributors.min.css',
 			array( 'makitdev-main' ),
 			$version
 		);
+
+		wp_enqueue_script(
+			'makitdev-contributors',
+			$base . '/js/contributors.js',
+			array( 'makitdev-main' ),
+			$version,
+			true
+		);
+	}
+
+	if ( is_front_page() || makitdev_is_contributors_page() ) {
+		add_action( 'wp_footer', 'makitdev_roster_data', 5 );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'makitdev_scripts' );
 
 /**
+ * True on the contributors page, whether it exists as a page or a template.
+ */
+function makitdev_is_contributors_page() {
+	return is_page_template( 'page-contributors.php' ) || is_page( 'contributors' );
+}
+
+/**
+ * Read assets/data/contributors.json, the curated roster the static build
+ * exposes through assets/data/contributors.js.
+ */
+function makitdev_read_roster() {
+	$file   = get_template_directory() . '/assets/data/contributors.json';
+	$roster = array();
+
+	if ( file_exists( $file ) ) {
+		$data = json_decode( (string) file_get_contents( $file ), true );
+		if ( is_array( $data ) ) {
+			$roster = $data;
+		}
+	}
+
+	return makitdev_unique_contributors( $roster );
+}
+
+/**
+ * Drop entries without a username and any repeated login, preserving order.
+ *
+ * The roster is hand-maintained through scripts/add-contributor.js, so this
+ * guards against the same person being listed twice.
+ */
+function makitdev_unique_contributors( array $contributors ) {
+	$unique = array();
+	$seen   = array();
+
+	foreach ( $contributors as $person ) {
+		if ( ! is_array( $person ) || empty( $person['username'] ) ) {
+			continue;
+		}
+		$key = strtolower( $person['username'] );
+		if ( isset( $seen[ $key ] ) ) {
+			continue;
+		}
+		$seen[ $key ] = true;
+		$unique[]     = $person;
+	}
+
+	return $unique;
+}
+
+/**
+ * Expose the roster as window.MDK_CONTRIBUTORS.
+ *
+ * The static build loads assets/data/contributors.js for this; the theme reads
+ * the same file and prints it inline in the footer, before the enqueued
+ * scripts run, so contributors.js can merge curated entries with live GitHub
+ * data either way.
+ */
+function makitdev_roster_data() {
+	$contributors = makitdev_read_roster();
+
+	if ( empty( $contributors ) ) {
+		return;
+	}
+
+	$json = wp_json_encode( array_values( $contributors ) );
+	if ( ! $json ) {
+		return;
+	}
+
+	printf(
+		"<script id=\"makitdev-contributors-data\">window.MDK_CONTRIBUTORS = %s;</script>\n",
+		$json // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- wp_json_encode output.
+	);
+}
+
+/**
  * Route /contributors automatically to page-contributors.php if not created in WP admin.
  */
 function makitdev_contributors_template( $template ) {
-	if ( is_page( 'contributors' ) || is_page_template( 'page-contributors.php' ) ) {
+	if ( makitdev_is_contributors_page() ) {
 		$custom = get_template_directory() . '/page-contributors.php';
 		if ( file_exists( $custom ) ) {
 			return $custom;
@@ -104,7 +212,7 @@ add_filter( 'template_include', 'makitdev_contributors_template' );
  */
 function makitdev_document_title_parts( $title ) {
 	if ( is_front_page() ) {
-		$title['title'] = __( 'Open Source Software', 'makitdev' );
+		$title['title'] = __( 'Build. Share. Improve.', 'makitdev' );
 	}
 	return $title;
 }
