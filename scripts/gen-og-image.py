@@ -203,7 +203,7 @@ def main():
 
     # Footer rule plus the canonical URL.
     canvas.fill(HAIRLINE, pad, 546, WIDTH - pad * 2, 1)
-    canvas.text("makitdev.wordpress.com", pad, 566, 4, MUTED, tracking=3)
+    canvas.text("makitdev.vercel.app", pad, 566, 4, MUTED, tracking=3)
 
     # Right-hand index mark, echoing the section numbering on the site.
     canvas.text("01", WIDTH - pad - text_width("01", 5, tracking=2), 92, 5, ACCENT, tracking=2)
